@@ -1,0 +1,359 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "APIs For stockFlow",
+        "description": "API de gestion de stock Innovertec",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Serveur local"
+        }
+    ],
+    "paths": {
+        "/api/v1/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Lister les produits",
+                "description": "Display a paginated list of products.",
+                "operationId": "1ce27f90dd8c39cea9520bf45d58c7c2",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Numero de page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Elements par page (1 a 100)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Product"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Creer un produit",
+                "description": "Store a newly created product.",
+                "operationId": "acaa0d3fdc74fd4b534e70fc016cf7f1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "product_reference",
+                                    "unit_price",
+                                    "available_quantity"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Vis M6 inox"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Boite de 100",
+                                        "nullable": true
+                                    },
+                                    "product_reference": {
+                                        "type": "string",
+                                        "example": "REF-VIS-M6"
+                                    },
+                                    "unit_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 12.5
+                                    },
+                                    "available_quantity": {
+                                        "type": "integer",
+                                        "example": 40
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "available",
+                                            "out_of_stock",
+                                            "awaiting_restock",
+                                            "archived"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produit cree",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Product"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Donnees invalides"
+                    }
+                }
+            }
+        },
+        "/api/v1/products/{product}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Afficher un produit",
+                "description": "Display the specified product.",
+                "operationId": "9d6564b9647b6b46ca1d3eb86c51643e",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "public_id du produit (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produit trouve",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Product"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produit introuvable"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Supprimer un produit",
+                "description": "Remove the specified product.",
+                "operationId": "dc780252f855e97451083ce643a83174",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "public_id du produit (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Produit supprime"
+                    },
+                    "404": {
+                        "description": "Produit introuvable"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Modifier un produit",
+                "description": "Update the specified product.",
+                "operationId": "780ef5766bbb62de4378b38eb7cdfbda",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "public_id du produit (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "product_reference": {
+                                        "type": "string"
+                                    },
+                                    "unit_price": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "available_quantity": {
+                                        "type": "integer"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "available",
+                                            "out_of_stock",
+                                            "awaiting_restock",
+                                            "archived"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produit modifie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/Product"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produit introuvable"
+                    },
+                    "422": {
+                        "description": "Donnees invalides"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Product": {
+                "title": "Product",
+                "description": "Un produit du catalogue",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "01m0t7zzrjdzd3jnqhqys4dvjj"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Vis M6 inox"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Boite de 100",
+                        "nullable": true
+                    },
+                    "productReference": {
+                        "type": "string",
+                        "example": "REF-VIS-M6"
+                    },
+                    "unitPrice": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 12.5
+                    },
+                    "availableQuantity": {
+                        "type": "integer",
+                        "example": 40
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "available",
+                        "enum": [
+                            "available",
+                            "out_of_stock",
+                            "awaiting_restock",
+                            "archived"
+                        ]
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Products",
+            "description": "Gestion du catalogue produits"
+        }
+    ]
+}
