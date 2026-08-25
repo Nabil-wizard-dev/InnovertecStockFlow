@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\DTOs\Order\CreateOrderDTO;
 use App\DTOs\Order\UpdateOrderDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Order\IndexOrderRequest;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
@@ -30,6 +31,11 @@ class OrderController extends Controller
         summary: 'Lister les commandes',
         tags: ['Orders'],
         parameters: [
+            new OA\QueryParameter(
+                name: 'status',
+                description: 'Filtre sur le statut de la commande',
+                schema: new OA\Schema(type: 'string', enum: ['draft', 'confirmed', 'cancelled']),
+            ),
             new OA\QueryParameter(name: 'page', schema: new OA\Schema(type: 'integer', default: 1)),
             new OA\QueryParameter(name: 'per_page', schema: new OA\Schema(type: 'integer', default: 15)),
         ],
@@ -51,13 +57,16 @@ class OrderController extends Controller
                     type: 'object',
                 ),
             ),
+            new OA\Response(
+                response: 422,
+                description: 'Statut inconnu',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
+            ),
         ],
     )]
-    public function index(Request $request): JsonResponse
+    public function index(IndexOrderRequest $request): JsonResponse
     {
-        $perPage = (int) $request->integer('per_page', 15);
-
-        $orders = $this->service->list(max(1, min($perPage, 100)));
+        $orders = $this->service->list($request->perPage(), $request->status());
         $orders->load('customer', 'items.product');
 
         return ApiResponse::success(data: OrderResource::collection($orders));

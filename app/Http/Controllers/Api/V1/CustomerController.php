@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\DTOs\Customer\CreateCustomerDTO;
 use App\DTOs\Customer\UpdateCustomerDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Customer\IndexCustomerRequest;
 use App\Http\Requests\Customer\StoreCustomerRequest;
 use App\Http\Requests\Customer\UpdateCustomerRequest;
 use App\Http\Resources\CustomerResource;
@@ -30,6 +31,11 @@ class CustomerController extends Controller
         summary: 'Lister les clients',
         tags: ['Customers'],
         parameters: [
+            new OA\QueryParameter(
+                name: 'status',
+                description: 'Filtre sur le statut du client',
+                schema: new OA\Schema(type: 'string', enum: ['active', 'inactive', 'suspended']),
+            ),
             new OA\QueryParameter(name: 'page', schema: new OA\Schema(type: 'integer', default: 1)),
             new OA\QueryParameter(name: 'per_page', schema: new OA\Schema(type: 'integer', default: 15)),
         ],
@@ -51,14 +57,19 @@ class CustomerController extends Controller
                     type: 'object',
                 ),
             ),
+            new OA\Response(
+                response: 422,
+                description: 'Statut inconnu',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
+            ),
         ],
     )]
-    public function index(Request $request): JsonResponse
+    public function index(IndexCustomerRequest $request): JsonResponse
     {
-        $perPage = (int) $request->integer('per_page', 15);
-
         return ApiResponse::success(
-            data: CustomerResource::collection($this->service->list(max(1, min($perPage, 100)))),
+            data: CustomerResource::collection(
+                $this->service->list($request->perPage(), $request->status())
+            ),
         );
     }
 

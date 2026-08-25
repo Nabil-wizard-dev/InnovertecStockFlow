@@ -2,6 +2,7 @@
 namespace App\Repositories\Interfaces;
 
 
+use App\Enums\CustomerStatus;
 use App\Models\Customer;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -21,7 +22,7 @@ interface CustomerRepositoryInterface
      *
      * @return LengthAwarePaginator<int, Customer>
      */
-    public function paginate(int $perPage = 15): LengthAwarePaginator;
+    public function paginate(int $perPage = 15, ?CustomerStatus $status = null): LengthAwarePaginator;
 
     public function create(array $data);
 

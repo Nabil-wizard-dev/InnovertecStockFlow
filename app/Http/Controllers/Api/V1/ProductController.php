@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\DTOs\Product\CreateProductDTO;
 use App\DTOs\Product\UpdateProductDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\IndexProductRequest;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
@@ -30,6 +31,14 @@ class ProductController extends Controller
         summary: 'Lister les produits',
         tags: ['Products'],
         parameters: [
+            new OA\QueryParameter(
+                name: 'status',
+                description: 'Filtre sur le statut du produit',
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['available', 'out_of_stock', 'awaiting_restock', 'archived'],
+                ),
+            ),
             new OA\QueryParameter(name: 'page', schema: new OA\Schema(type: 'integer', default: 1)),
             new OA\QueryParameter(name: 'per_page', schema: new OA\Schema(type: 'integer', default: 15)),
         ],
@@ -51,14 +60,19 @@ class ProductController extends Controller
                     type: 'object',
                 ),
             ),
+            new OA\Response(
+                response: 422,
+                description: 'Statut inconnu',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
+            ),
         ],
     )]
-    public function index(Request $request): JsonResponse
+    public function index(IndexProductRequest $request): JsonResponse
     {
-        $perPage = (int) $request->integer('per_page', 15);
-
         return ApiResponse::success(
-            data: ProductResource::collection($this->service->list(max(1, min($perPage, 100)))),
+            data: ProductResource::collection(
+                $this->service->list($request->perPage(), $request->status())
+            ),
         );
     }
 

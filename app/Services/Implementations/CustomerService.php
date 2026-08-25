@@ -4,6 +4,7 @@ namespace App\Services\Implementations;
 
 use App\DTOs\Customer\CreateCustomerDTO;
 use App\DTOs\Customer\UpdateCustomerDTO;
+use App\Enums\CustomerStatus;
 use App\Models\Customer;
 use App\Repositories\Interfaces\CustomerRepositoryInterface;
 use App\Services\Interfaces\CustomerServiceInterface;
@@ -21,9 +22,9 @@ class CustomerService implements CustomerServiceInterface
      *
      * @return LengthAwarePaginator<int, Customer>
      */
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list(int $perPage = 15, ?CustomerStatus $status = null): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage);
+        return $this->repository->paginate($perPage, $status);
     }
 
     /**

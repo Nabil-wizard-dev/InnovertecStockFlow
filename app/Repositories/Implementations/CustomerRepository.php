@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Implementations;
 
+use App\Enums\CustomerStatus;
 use App\Models\Customer;
 use App\Repositories\Interfaces\CustomerRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -30,9 +31,12 @@ class CustomerRepository implements CustomerRepositoryInterface
      *
      * @return LengthAwarePaginator<int, Customer>
      */
-    public function paginate(int $perPage = 15): LengthAwarePaginator
+    public function paginate(int $perPage = 15, ?CustomerStatus $status = null): LengthAwarePaginator
     {
-        return Customer::query()->latest()->paginate($perPage);
+        return Customer::query()
+            ->when($status !== null, fn ($query) => $query->where('status', $status))
+            ->latest()
+            ->paginate($perPage);
     }
 
     public function create(array $data)

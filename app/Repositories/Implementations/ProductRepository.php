@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Implementations;
 
+use App\Enums\ProductStatus;
 use App\Models\Product;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -38,9 +39,12 @@ class ProductRepository implements ProductRepositoryInterface
      *
      * @return LengthAwarePaginator<int, Product>
      */
-    public function paginate(int $perPage = 15): LengthAwarePaginator
+    public function paginate(int $perPage = 15, ?ProductStatus $status = null): LengthAwarePaginator
     {
-        return Product::query()->latest()->paginate($perPage);
+        return Product::query()
+            ->when($status !== null, fn ($query) => $query->where('status', $status))
+            ->latest()
+            ->paginate($perPage);
     }
 
     public function create(array $data)

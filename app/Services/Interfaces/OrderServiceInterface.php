@@ -4,6 +4,7 @@ namespace App\Services\Interfaces;
 
 use App\DTOs\Order\CreateOrderDTO;
 use App\DTOs\Order\UpdateOrderDTO;
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -14,7 +15,7 @@ interface OrderServiceInterface
      *
      * @return LengthAwarePaginator<int, Order>
      */
-    public function list(int $perPage = 15): LengthAwarePaginator;
+    public function list(int $perPage = 15, ?OrderStatus $status = null): LengthAwarePaginator;
 
     /**
      * Create a new order along with its line items.

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Enums\ProductStatus;
 use App\Models\Product;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -29,7 +30,7 @@ interface ProductRepositoryInterface
      *
      * @return LengthAwarePaginator<int, Product>
      */
-    public function paginate(int $perPage = 15): LengthAwarePaginator;
+    public function paginate(int $perPage = 15, ?ProductStatus $status = null): LengthAwarePaginator;
 
     public function create(array $data);
 

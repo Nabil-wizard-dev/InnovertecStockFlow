@@ -4,6 +4,7 @@ namespace App\Services\Interfaces;
 
 use App\DTOs\Product\CreateProductDTO;
 use App\DTOs\Product\UpdateProductDTO;
+use App\Enums\ProductStatus;
 use App\Models\Product;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -14,7 +15,7 @@ interface ProductServiceInterface
      *
      * @return LengthAwarePaginator<int, Product>
      */
-    public function list(int $perPage = 15): LengthAwarePaginator;
+    public function list(int $perPage = 15, ?ProductStatus $status = null): LengthAwarePaginator;
 
     /**
      * Create a new product.

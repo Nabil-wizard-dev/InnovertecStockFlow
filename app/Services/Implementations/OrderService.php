@@ -32,9 +32,9 @@ class OrderService implements OrderServiceInterface
      *
      * @return LengthAwarePaginator<int, Order>
      */
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list(int $perPage = 15, ?OrderStatus $status = null): LengthAwarePaginator
     {
-        return $this->orders->paginate($perPage);
+        return $this->orders->paginate($perPage, $status);
     }
 
     /**

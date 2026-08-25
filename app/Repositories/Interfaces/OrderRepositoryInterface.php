@@ -1,6 +1,7 @@
 <?php 
 namespace App\Repositories\Interfaces;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -15,7 +16,7 @@ interface OrderRepositoryInterface
      *
      * @return LengthAwarePaginator<int, Order>
      */
-    public function paginate(int $perPage = 15): LengthAwarePaginator;
+    public function paginate(int $perPage = 15, ?OrderStatus $status = null): LengthAwarePaginator;
 
     public function create(array $data);
 

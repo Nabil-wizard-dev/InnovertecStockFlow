@@ -22,6 +22,19 @@
                 "operationId": "4446e25a8cf802d05268d8b26e3df4af",
                 "parameters": [
                     {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtre sur le statut du client",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "active",
+                                "inactive",
+                                "suspended"
+                            ]
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "schema": {
@@ -64,6 +77,16 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Statut inconnu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -362,6 +385,19 @@
                 "operationId": "00d3856d2d3d93124e0cc021d0cb5b79",
                 "parameters": [
                     {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtre sur le statut de la commande",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "draft",
+                                "confirmed",
+                                "cancelled"
+                            ]
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "schema": {
@@ -404,6 +440,16 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Statut inconnu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -1207,6 +1253,20 @@
                 "operationId": "1ce27f90dd8c39cea9520bf45d58c7c2",
                 "parameters": [
                     {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtre sur le statut du produit",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "available",
+                                "out_of_stock",
+                                "awaiting_restock",
+                                "archived"
+                            ]
+                        }
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "schema": {
@@ -1249,6 +1309,16 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Statut inconnu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }

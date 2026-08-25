@@ -4,6 +4,7 @@ namespace App\Services\Implementations;
 
 use App\DTOs\Product\CreateProductDTO;
 use App\DTOs\Product\UpdateProductDTO;
+use App\Enums\ProductStatus;
 use App\Models\Product;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Services\Interfaces\ProductServiceInterface;
@@ -21,9 +22,9 @@ class ProductService implements ProductServiceInterface
      *
      * @return LengthAwarePaginator<int, Product>
      */
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list(int $perPage = 15, ?ProductStatus $status = null): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage);
+        return $this->repository->paginate($perPage, $status);
     }
 
     /**
