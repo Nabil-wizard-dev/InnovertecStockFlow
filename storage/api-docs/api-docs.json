@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "APIs For stockFlow",
-        "description": "API de gestion de stock Innovertec",
+        "description": "stock management API for Innovertec",
         "version": "1.0.0"
     },
     "servers": [
@@ -12,19 +12,18 @@
         }
     ],
     "paths": {
-        "/api/v1/products": {
+        "/api/v1/customers": {
             "get": {
                 "tags": [
-                    "Products"
+                    "Customers"
                 ],
-                "summary": "Lister les produits",
-                "description": "Display a paginated list of products.",
-                "operationId": "1ce27f90dd8c39cea9520bf45d58c7c2",
+                "summary": "Lister les clients",
+                "description": "Display a paginated list of customers.",
+                "operationId": "4446e25a8cf802d05268d8b26e3df4af",
                 "parameters": [
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Numero de page",
                         "schema": {
                             "type": "integer",
                             "default": 1
@@ -33,7 +32,6 @@
                     {
                         "name": "per_page",
                         "in": "query",
-                        "description": "Elements par page (1 a 100)",
                         "schema": {
                             "type": "integer",
                             "default": 15
@@ -47,11 +45,1207 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Customer"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Creer un client",
+                "description": "Store a newly created customer.",
+                "operationId": "4000324e6e48b657b38514893267ba99",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "first_name",
+                                    "last_name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string",
+                                        "example": "Amina"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Traore"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "amina@example.com"
+                                    },
+                                    "telephone": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "adresse": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "inactive",
+                                            "suspended"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Client cree",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Client cree avec succes."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Customer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Donnees invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/customers/{customer}": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Afficher un client",
+                "description": "Display the specified customer.",
+                "operationId": "239ca810caae47dc2e02fd10bfb19130",
+                "parameters": [
+                    {
+                        "name": "customer",
+                        "in": "path",
+                        "description": "public_id du client (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Client trouve",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Customer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Client introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Supprimer un client",
+                "description": "Remove the specified customer.",
+                "operationId": "052123822971c729fc98e6af6beb3c04",
+                "parameters": [
+                    {
+                        "name": "customer",
+                        "in": "path",
+                        "description": "public_id du client (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Client supprime"
+                    },
+                    "404": {
+                        "description": "Client introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Modifier un client",
+                "description": "Update the specified customer.",
+                "operationId": "a5816017f86392a035c3b39c9f50e963",
+                "parameters": [
+                    {
+                        "name": "customer",
+                        "in": "path",
+                        "description": "public_id du client (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "telephone": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "adresse": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "inactive",
+                                            "suspended"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Client modifie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Client mis a jour avec succes."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Customer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Client introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Donnees invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Lister les commandes",
+                "description": "Display a paginated list of orders.",
+                "operationId": "00d3856d2d3d93124e0cc021d0cb5b79",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Order"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Creer une commande",
+                "description": "Store a newly created order with its line items.",
+                "operationId": "79da0a1adcc617490783dfd61927ff56",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "customer_id"
+                                ],
+                                "properties": {
+                                    "customer_id": {
+                                        "description": "public_id du client",
+                                        "type": "string",
+                                        "example": "01m0t7zzrjdzd3jnqhqys4dvjj"
+                                    },
+                                    "order_reference": {
+                                        "description": "Genere automatiquement si absent",
+                                        "type": "string"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_id": {
+                                                    "description": "public_id du produit",
+                                                    "type": "string"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Commande creee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commande creee avec succes."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Donnees invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/orders/{order}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Afficher une commande",
+                "description": "Display the specified order.",
+                "operationId": "38713af501dbd66af5a66bd568a49bc2",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "public_id de la commande (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commande trouvee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Commande introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Supprimer une commande",
+                "description": "Remove the specified order.",
+                "operationId": "4baa2e826530c2663217ed85efd8e3e3",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "public_id de la commande (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Commande supprimee"
+                    },
+                    "404": {
+                        "description": "Commande introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Commande confirmee : annuler d'abord pour restituer le stock (INVALID_ORDER_TRANSITION)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Modifier une commande",
+                "description": "Le statut ne se change pas ici : utiliser /confirm ou /cancel.",
+                "operationId": "25408827628495f84fbaecb37dd89c84",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "public_id de la commande (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "customer_id": {
+                                        "description": "public_id du client",
+                                        "type": "string"
+                                    },
+                                    "order_reference": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Commande modifiee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commande mise a jour avec succes."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Commande introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Commande non modifiable car confirmee ou annulee (INVALID_ORDER_TRANSITION)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Donnees invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/orders/{order}/confirm": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Confirmer une commande (decremente le stock)",
+                "description": "Verifie la disponibilite de toutes les lignes, decremente available_quantity de chaque produit, puis passe la commande en confirmed. Si une seule ligne est non servable, rien n'est ecrit.",
+                "operationId": "afad8d9fe196a39aa188af41de744dcf",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "public_id de la commande (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commande confirmee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commande confirmee avec succes."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Commande introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Stock insuffisant (INSUFFICIENT_STOCK) ou statut incompatible (INVALID_ORDER_TRANSITION)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/orders/{order}/cancel": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Annuler une commande (restitue le stock si confirmee)",
+                "description": "Passe la commande en cancelled. Si elle etait confirmed, les quantites sont rendues au stock.",
+                "operationId": "aee443a742a80c8c038743d02cee6c66",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "public_id de la commande (ULID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commande annulee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Commande annulee avec succes."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Commande introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Commande deja annulee (INVALID_ORDER_TRANSITION)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/orders/{order}/items": {
+            "get": {
+                "tags": [
+                    "Order items"
+                ],
+                "summary": "Lister les lignes d'une commande",
+                "description": "Display the line items of an order.",
+                "operationId": "8f7e05dc83b23e0ce1dcec2b07f7490d",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "public_id de la commande",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/OrderItem"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Commande introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Order items"
+                ],
+                "summary": "Ajouter une ligne a une commande",
+                "description": "Add a line item to an order.",
+                "operationId": "733de039174c1145dabdee06418baff0",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "public_id de la commande",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "description": "public_id du produit",
+                                        "type": "string",
+                                        "example": "01m0t7zzrjdzd3jnqhqys4dvjj"
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ligne ajoutee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ligne ajoutee avec succes."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderItem"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Commande non modifiable car confirmee ou annulee (INVALID_ORDER_TRANSITION)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Donnees invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/orders/{order}/items/{item}": {
+            "get": {
+                "tags": [
+                    "Order items"
+                ],
+                "summary": "Afficher une ligne",
+                "description": "Display a single line item.",
+                "operationId": "588fb5db8aab02e6e8389d74ef743f7b",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "item",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ligne trouvee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderItem"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ligne introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Order items"
+                ],
+                "summary": "Supprimer une ligne",
+                "description": "Remove a line item.",
+                "operationId": "5c91ea4b882c867aa96a2b7e16402c13",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "item",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ligne supprimee"
+                    },
+                    "404": {
+                        "description": "Ligne introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Commande non modifiable car confirmee ou annulee (INVALID_ORDER_TRANSITION)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Order items"
+                ],
+                "summary": "Modifier une ligne",
+                "description": "Update a line item.",
+                "operationId": "ca23d4349eea4495da7c0b0b0a0ebc5d",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "item",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "product_id": {
+                                        "description": "public_id du produit",
+                                        "type": "string"
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ligne modifiee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ligne mise a jour avec succes."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderItem"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ligne introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Commande non modifiable car confirmee ou annulee (INVALID_ORDER_TRANSITION)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Donnees invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Lister les produits",
+                "description": "Display a paginated list of products.",
+                "operationId": "1ce27f90dd8c39cea9520bf45d58c7c2",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginee",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/Product"
                                             }
+                                        },
+                                        "meta": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -124,6 +1318,14 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Produit cree avec succes."
+                                        },
                                         "data": {
                                             "$ref": "#/components/schemas/Product"
                                         }
@@ -134,7 +1336,14 @@
                         }
                     },
                     "422": {
-                        "description": "Donnees invalides"
+                        "description": "Donnees invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -165,6 +1374,14 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
                                         "data": {
                                             "$ref": "#/components/schemas/Product"
                                         }
@@ -175,7 +1392,14 @@
                         }
                     },
                     "404": {
-                        "description": "Produit introuvable"
+                        "description": "Produit introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -202,7 +1426,14 @@
                         "description": "Produit supprime"
                     },
                     "404": {
-                        "description": "Produit introuvable"
+                        "description": "Produit introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -269,6 +1500,14 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Produit mis a jour avec succes."
+                                        },
                                         "data": {
                                             "$ref": "#/components/schemas/Product"
                                         }
@@ -279,10 +1518,24 @@
                         }
                     },
                     "404": {
-                        "description": "Produit introuvable"
+                        "description": "Produit introuvable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     },
                     "422": {
-                        "description": "Donnees invalides"
+                        "description": "Donnees invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -290,6 +1543,149 @@
     },
     "components": {
         "schemas": {
+            "Customer": {
+                "title": "Customer",
+                "description": "Un client",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "01m0t7zzrjdzd3jnqhqys4dvjj"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "Amina"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "Traore"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "amina@example.com"
+                    },
+                    "telephone": {
+                        "type": "string",
+                        "example": "+225 07 00 00 00",
+                        "nullable": true
+                    },
+                    "adresse": {
+                        "type": "string",
+                        "example": "Abidjan, Cocody",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "active",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "suspended"
+                        ]
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderItem": {
+                "title": "OrderItem",
+                "description": "Une ligne de commande",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "01m0t7zzrjdzd3jnqhqys4dvjj"
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "unitPrice": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 12.5
+                    },
+                    "subtotal": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 37.5
+                    },
+                    "product": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Product"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Order": {
+                "title": "Order",
+                "description": "Une commande",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "01m0t7zzrjdzd3jnqhqys4dvjj"
+                    },
+                    "orderReference": {
+                        "type": "string",
+                        "example": "ORD-4KD82MZQ7X"
+                    },
+                    "totalAmount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 37.5
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "draft",
+                        "enum": [
+                            "draft",
+                            "confirmed",
+                            "cancelled"
+                        ]
+                    },
+                    "customer": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Customer"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderItem"
+                        }
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "Product": {
                 "title": "Product",
                 "description": "Un produit du catalogue",
@@ -340,6 +1736,50 @@
                     }
                 },
                 "type": "object"
+            },
+            "ErrorResponse": {
+                "title": "ErrorResponse",
+                "description": "Enveloppe commune a toutes les reponses en erreur",
+                "properties": {
+                    "success": {
+                        "description": "Single entry point for every JSON response of the API.\n\nSuccess envelope:\n  { \"success\": true, \"message\": string|null, \"data\": mixed,\n    \"meta\"?: object, \"links\"?: object }\n\nError envelope:\n  { \"success\": false, \"message\": string, \"error_code\": string,\n    \"errors\"?: object }\n\nThe taxonomy of error codes lives in {@see ErrorCode}; the exceptions that\ncarry them derive from {@see \\App\\Exceptions\\ApiException}.",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "La ressource demandee est introuvable."
+                    },
+                    "error_code": {
+                        "type": "string",
+                        "example": "RESOURCE_NOT_FOUND",
+                        "enum": [
+                            "VALIDATION_ERROR",
+                            "RESOURCE_NOT_FOUND",
+                            "UNAUTHENTICATED",
+                            "FORBIDDEN",
+                            "METHOD_NOT_ALLOWED",
+                            "TOO_MANY_REQUESTS",
+                            "CONFLICT",
+                            "BUSINESS_RULE_VIOLATION",
+                            "INSUFFICIENT_STOCK",
+                            "INVALID_ORDER_TRANSITION",
+                            "SERVER_ERROR",
+                            "SERVICE_UNAVAILABLE"
+                        ]
+                    },
+                    "errors": {
+                        "type": "object",
+                        "nullable": true,
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -351,6 +1791,18 @@
         }
     },
     "tags": [
+        {
+            "name": "Customers",
+            "description": "Gestion des clients"
+        },
+        {
+            "name": "Orders",
+            "description": "Gestion des commandes"
+        },
+        {
+            "name": "Order items",
+            "description": "Lignes d'une commande"
+        },
         {
             "name": "Products",
             "description": "Gestion du catalogue produits"

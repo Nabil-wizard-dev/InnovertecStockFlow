@@ -12,6 +12,22 @@ class ProductRepository implements ProductRepositoryInterface
         return Product::find($id);
     }
 
+    /**
+     * Find a record by its public ULID.
+     */
+    public function findByPublicId(string $publicId): ?Product
+    {
+        return Product::query()->where('public_id', $publicId)->first();
+    }
+
+    /**
+     * Find a record and lock the row until the transaction ends.
+     */
+    public function findForUpdate(int $id): ?Product
+    {
+        return Product::query()->lockForUpdate()->find($id);
+    }
+
     public function all()
     {
         return Product::all();

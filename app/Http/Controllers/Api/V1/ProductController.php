@@ -8,11 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\Product;
 use App\Services\Interfaces\ProductServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: 'Products', description: 'Gestion du catalogue produits')]
@@ -30,16 +30,8 @@ class ProductController extends Controller
         summary: 'Lister les produits',
         tags: ['Products'],
         parameters: [
-            new OA\QueryParameter(
-                name: 'page',
-                description: 'Numero de page',
-                schema: new OA\Schema(type: 'integer', default: 1),
-            ),
-            new OA\QueryParameter(
-                name: 'per_page',
-                description: 'Elements par page (1 a 100)',
-                schema: new OA\Schema(type: 'integer', default: 15),
-            ),
+            new OA\QueryParameter(name: 'page', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\QueryParameter(name: 'per_page', schema: new OA\Schema(type: 'integer', default: 15)),
         ],
         responses: [
             new OA\Response(
@@ -47,23 +39,26 @@ class ProductController extends Controller
                 description: 'Liste paginee',
                 content: new OA\JsonContent(
                     properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string', nullable: true),
                         new OA\Property(
                             property: 'data',
                             type: 'array',
                             items: new OA\Items(ref: '#/components/schemas/Product'),
                         ),
+                        new OA\Property(property: 'meta', type: 'object'),
                     ],
                     type: 'object',
                 ),
             ),
         ],
     )]
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $perPage = (int) $request->integer('per_page', 15);
 
-        return ProductResource::collection(
-            $this->service->list(max(1, min($perPage, 100)))
+        return ApiResponse::success(
+            data: ProductResource::collection($this->service->list(max(1, min($perPage, 100)))),
         );
     }
 
@@ -99,21 +94,28 @@ class ProductController extends Controller
                 description: 'Produit cree',
                 content: new OA\JsonContent(
                     properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string', example: 'Produit cree avec succes.'),
                         new OA\Property(property: 'data', ref: '#/components/schemas/Product'),
                     ],
                     type: 'object',
                 ),
             ),
-            new OA\Response(response: 422, description: 'Donnees invalides'),
+            new OA\Response(
+                response: 422,
+                description: 'Donnees invalides',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
+            ),
         ],
     )]
     public function store(StoreProductRequest $request): JsonResponse
     {
         $product = $this->service->create(CreateProductDTO::fromRequest($request));
 
-        return ProductResource::make($product)
-            ->response()
-            ->setStatusCode(201);
+        return ApiResponse::created(
+            data: ProductResource::make($product),
+            message: 'Produit cree avec succes.',
+        );
     }
 
     /**
@@ -137,17 +139,23 @@ class ProductController extends Controller
                 description: 'Produit trouve',
                 content: new OA\JsonContent(
                     properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string', nullable: true),
                         new OA\Property(property: 'data', ref: '#/components/schemas/Product'),
                     ],
                     type: 'object',
                 ),
             ),
-            new OA\Response(response: 404, description: 'Produit introuvable'),
+            new OA\Response(
+                response: 404,
+                description: 'Produit introuvable',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
+            ),
         ],
     )]
-    public function show(Product $product): ProductResource
+    public function show(Product $product): JsonResponse
     {
-        return ProductResource::make($product);
+        return ApiResponse::success(data: ProductResource::make($product));
     }
 
     /**
@@ -189,19 +197,32 @@ class ProductController extends Controller
                 description: 'Produit modifie',
                 content: new OA\JsonContent(
                     properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string', example: 'Produit mis a jour avec succes.'),
                         new OA\Property(property: 'data', ref: '#/components/schemas/Product'),
                     ],
                     type: 'object',
                 ),
             ),
-            new OA\Response(response: 404, description: 'Produit introuvable'),
-            new OA\Response(response: 422, description: 'Donnees invalides'),
+            new OA\Response(
+                response: 404,
+                description: 'Produit introuvable',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Donnees invalides',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
+            ),
         ],
     )]
-    public function update(UpdateProductRequest $request, Product $product): ProductResource
+    public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
-        return ProductResource::make(
-            $this->service->update($product, UpdateProductDTO::fromRequest($request))
+        $product = $this->service->update($product, UpdateProductDTO::fromRequest($request));
+
+        return ApiResponse::success(
+            data: ProductResource::make($product),
+            message: 'Produit mis a jour avec succes.',
         );
     }
 
@@ -222,13 +243,17 @@ class ProductController extends Controller
         ],
         responses: [
             new OA\Response(response: 204, description: 'Produit supprime'),
-            new OA\Response(response: 404, description: 'Produit introuvable'),
+            new OA\Response(
+                response: 404,
+                description: 'Produit introuvable',
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
+            ),
         ],
     )]
     public function destroy(Product $product): JsonResponse
     {
         $this->service->delete($product);
 
-        return response()->json(status: 204);
+        return ApiResponse::noContent();
     }
 }

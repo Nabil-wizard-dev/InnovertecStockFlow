@@ -3,6 +3,7 @@ namespace App\Repositories\Implementations;
 
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -14,6 +15,16 @@ class OrderRepository implements OrderRepositoryInterface
     public function all()
     {
         return Order::all();
+    }
+
+    /**
+     * Get a paginated list of records.
+     *
+     * @return LengthAwarePaginator<int, Order>
+     */
+    public function paginate(int $perPage = 15): LengthAwarePaginator
+    {
+        return Order::query()->latest()->paginate($perPage);
     }
 
     public function create(array $data)
