@@ -28,9 +28,16 @@ interface ProductRepositoryInterface
     /**
      * Get a paginated list of products.
      *
+     * `$minPrice` / `$maxPrice` bound the unit price, inclusive on both ends.
+     *
      * @return LengthAwarePaginator<int, Product>
      */
-    public function paginate(int $perPage = 15, ?ProductStatus $status = null): LengthAwarePaginator;
+    public function paginate(
+        int $perPage = 15,
+        ?ProductStatus $status = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+    ): LengthAwarePaginator;
 
     public function create(array $data);
 

@@ -25,6 +25,13 @@ class IndexProductRequest extends FormRequest
     {
         return [
             'status' => ['sometimes', Rule::enum(ProductStatus::class)],
+            'min_price' => ['sometimes', 'numeric', 'min:0'],
+            // `gte` ne se declenche que si la borne basse est fournie : sans ce garde,
+            // Laravel compare a un `min_price` absent et rejette un `max_price` seul.
+            'max_price' => [
+                'sometimes', 'numeric', 'min:0',
+                Rule::when($this->has('min_price'), ['gte:min_price']),
+            ],
             'page' => ['sometimes', 'integer', 'min:1'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ];
@@ -38,6 +45,26 @@ class IndexProductRequest extends FormRequest
         $value = $this->validated()['status'] ?? null;
 
         return $value !== null ? ProductStatus::from($value) : null;
+    }
+
+    /**
+     * The lower bound of the unit price filter, if any.
+     */
+    public function minPrice(): ?float
+    {
+        $value = $this->validated()['min_price'] ?? null;
+
+        return $value !== null ? (float) $value : null;
+    }
+
+    /**
+     * The upper bound of the unit price filter, if any.
+     */
+    public function maxPrice(): ?float
+    {
+        $value = $this->validated()['max_price'] ?? null;
+
+        return $value !== null ? (float) $value : null;
     }
 
     /**

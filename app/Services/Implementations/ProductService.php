@@ -20,11 +20,17 @@ class ProductService implements ProductServiceInterface
     /**
      * Get a paginated list of products.
      *
+     * `$minPrice` / `$maxPrice` bound the unit price, inclusive on both ends.
+     *
      * @return LengthAwarePaginator<int, Product>
      */
-    public function list(int $perPage = 15, ?ProductStatus $status = null): LengthAwarePaginator
-    {
-        return $this->repository->paginate($perPage, $status);
+    public function list(
+        int $perPage = 15,
+        ?ProductStatus $status = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+    ): LengthAwarePaginator {
+        return $this->repository->paginate($perPage, $status, $minPrice, $maxPrice);
     }
 
     /**

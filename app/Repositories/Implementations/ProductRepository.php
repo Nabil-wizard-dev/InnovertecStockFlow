@@ -37,12 +37,20 @@ class ProductRepository implements ProductRepositoryInterface
     /**
      * Get a paginated list of products.
      *
+     * `$minPrice` / `$maxPrice` bound the unit price, inclusive on both ends.
+     *
      * @return LengthAwarePaginator<int, Product>
      */
-    public function paginate(int $perPage = 15, ?ProductStatus $status = null): LengthAwarePaginator
-    {
+    public function paginate(
+        int $perPage = 15,
+        ?ProductStatus $status = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+    ): LengthAwarePaginator {
         return Product::query()
             ->when($status !== null, fn ($query) => $query->where('status', $status))
+            ->when($minPrice !== null, fn ($query) => $query->where('unit_price', '>=', $minPrice))
+            ->when($maxPrice !== null, fn ($query) => $query->where('unit_price', '<=', $maxPrice))
             ->latest()
             ->paginate($perPage);
     }

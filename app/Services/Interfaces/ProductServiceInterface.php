@@ -13,9 +13,16 @@ interface ProductServiceInterface
     /**
      * Get a paginated list of products.
      *
+     * `$minPrice` / `$maxPrice` bound the unit price, inclusive on both ends.
+     *
      * @return LengthAwarePaginator<int, Product>
      */
-    public function list(int $perPage = 15, ?ProductStatus $status = null): LengthAwarePaginator;
+    public function list(
+        int $perPage = 15,
+        ?ProductStatus $status = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+    ): LengthAwarePaginator;
 
     /**
      * Create a new product.

@@ -39,6 +39,16 @@ class ProductController extends Controller
                     enum: ['available', 'out_of_stock', 'awaiting_restock', 'archived'],
                 ),
             ),
+            new OA\QueryParameter(
+                name: 'min_price',
+                description: 'Prix unitaire minimum, borne incluse',
+                schema: new OA\Schema(type: 'number', format: 'float', minimum: 0, example: 100000),
+            ),
+            new OA\QueryParameter(
+                name: 'max_price',
+                description: 'Prix unitaire maximum, borne incluse',
+                schema: new OA\Schema(type: 'number', format: 'float', minimum: 0, example: 500000),
+            ),
             new OA\QueryParameter(name: 'page', schema: new OA\Schema(type: 'integer', default: 1)),
             new OA\QueryParameter(name: 'per_page', schema: new OA\Schema(type: 'integer', default: 15)),
         ],
@@ -62,7 +72,7 @@ class ProductController extends Controller
             ),
             new OA\Response(
                 response: 422,
-                description: 'Statut inconnu',
+                description: 'Statut inconnu ou fourchette de prix invalide',
                 content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse'),
             ),
         ],
@@ -71,7 +81,12 @@ class ProductController extends Controller
     {
         return ApiResponse::success(
             data: ProductResource::collection(
-                $this->service->list($request->perPage(), $request->status())
+                $this->service->list(
+                    $request->perPage(),
+                    $request->status(),
+                    $request->minPrice(),
+                    $request->maxPrice(),
+                )
             ),
         );
     }

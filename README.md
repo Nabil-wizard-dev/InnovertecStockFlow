@@ -1,4 +1,4 @@
-# StockFlow API 
+# StockFlow API center
 
 API REST de gestion de stock : catalogue produits, clients, commandes et mouvements de stock à la confirmation.
 
