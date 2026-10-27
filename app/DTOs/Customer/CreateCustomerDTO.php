@@ -15,7 +15,6 @@ final readonly class CreateCustomerDTO
         public ?string $adresse,
         public CustomerStatus $status,
     ) {}
-
     /**
      * Build the DTO from a validated request.
      */

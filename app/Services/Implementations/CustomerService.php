@@ -49,7 +49,7 @@ class CustomerService implements CustomerServiceInterface
         return DB::transaction(
             fn (): Customer => $this->repository->update($customer->id, $attributes) ?? $customer
         );
-    }
+    } 
 
     /**
      * Delete a customer.
